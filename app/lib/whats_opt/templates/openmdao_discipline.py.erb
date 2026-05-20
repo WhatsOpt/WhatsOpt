@@ -1,5 +1,9 @@
 import numpy as np #noqa
+<% if @generator.split_plain_mode? -%>
+from <%= @generator.base_import_prefix %><%= @dimpl.py_modulename %>_base import <%= @dimpl.py_classname %>Base
+<% else -%>
 from <%= @pkg_prefix %><%= @dimpl.py_full_modulename %>_base import <%= @dimpl.py_classname %>Base
+<% end -%>
 <% if @dimpl.jax_component -%>
 import jax.numpy as jnp #noqa
 <% end -%>

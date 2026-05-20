@@ -37,6 +37,14 @@ module WhatsOpt
       !@pkg_prefix.blank? && @mda.is_root?
     end
 
+    def split_plain_mode?
+      @pkg_prefix.blank?
+    end
+
+    def impl_import_prefix
+      split_plain_mode? ? "impl." : @pkg_prefix
+    end
+
     # options: with_run: true, with_server: false, with_runops: true, user_agent: nil, sqlite_filename: nil
     def generate(options = {})
       zip_filename = nil

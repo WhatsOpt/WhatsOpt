@@ -1,7 +1,11 @@
 from optparse import OptionParser
 import openmdao.api as om
 # from openmdao_extensions.reckless_nonlinear_block_gs import RecklessNonlinearBlockGS
+<% if @generator.split_plain_mode? -%>
+from <%= @generator.base_import_prefix %><%= @impl.py_modulename %>_base import <%= @impl.py_classname %>Base, <%= @impl.py_classname %>FactoryBase
+<% else -%>
 from <%= @pkg_prefix %><%= @impl.py_full_modulename %>_base import <%= @impl.py_classname %>Base, <%= @impl.py_classname %>FactoryBase
+<% end -%>
 
 
 class <%= @impl.py_classname %>Factory(<%= @impl.py_classname %>FactoryBase):

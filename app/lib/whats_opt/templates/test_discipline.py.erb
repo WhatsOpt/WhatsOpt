@@ -1,8 +1,13 @@
 import unittest
 import numpy as np
 import openmdao.api as om
+<% if @generator.split_plain_mode? -%>
+from <%= @generator.impl_import_prefix %><%= @discipline.analysis.impl.py_modulename %> import <%= @discipline.analysis.impl.py_classname %>Factory
+from <%= @generator.impl_import_prefix %><%= @discipline.impl.py_modulename %> import <%= @discipline.impl.py_classname %>
+<% else -%>
 from <%= @pkg_prefix %><%= @discipline.analysis.impl.py_full_modulename %> import <%= @discipline.analysis.impl.py_classname %>Factory
 from <%= @pkg_prefix %><%= @discipline.impl.py_full_modulename %> import <%= @discipline.impl.py_classname %>
+<% end -%>
 
 class Test<%= @discipline.impl.py_classname %>(om.Group):
     def __init__(self, factory, **kwargs): 

@@ -9,7 +9,7 @@ module WhatsOpt
     end
 
     def initialize(mda, pkg_format: false, server_host: nil, server_port: 31400, driver_name: nil, driver_options: {}, outdir: ".",
-                   whatsopt_url: "", api_key: "", remote_ip: "")
+             whatsopt_url: "", api_key: "", remote_ip: "", base_namespace: "")
       super(mda, pkg_format: pkg_format, server_host: server_host, server_port: server_port)
       @prefix = "openmdao"
       @framework = "openmdao"
@@ -27,6 +27,22 @@ module WhatsOpt
       @api_key = api_key
       @remote_ip = remote_ip
       @check_only = false
+      @base_namespace = base_namespace
+    end
+
+    def split_plain_mode?
+      @pkg_prefix.blank?
+    end
+
+    def base_import_prefix
+      return @pkg_prefix unless split_plain_mode?
+
+      namespace = @base_namespace.tr("/", ".")
+      namespace.blank? ? "base." : "base.#{namespace}."
+    end
+
+    def impl_import_prefix
+      split_plain_mode? ? "impl." : @pkg_prefix
     end
 
     def to_run_method(category)
@@ -92,9 +108,18 @@ module WhatsOpt
     end
 
     def _check_mda(dir)
-      script = File.join(dir, @impl.py_filename)
+      script = if split_plain_mode?
+        File.join(dir, "impl", @impl.py_filename)
+      else
+        File.join(dir, @impl.py_filename)
+      end
       Rails.logger.info "#{PYTHON} #{script} --no-n2"
-      stdouterr, status = Open3.capture2e(PYTHON, script, "--no-n2")
+      if split_plain_mode?
+        env = { "PYTHONPATH" => [dir, ENV["PYTHONPATH"]].compact.join(":") }
+        stdouterr, status = Open3.capture2e(env, PYTHON, script, "--no-n2")
+      else
+        stdouterr, status = Open3.capture2e(PYTHON, script, "--no-n2")
+      end
       return status.success?, stdouterr
     end
 
@@ -155,22 +180,25 @@ module WhatsOpt
       if @discipline.type == WhatsOpt::Discipline::OPTIMIZATION
         _generate_sub_optimization(gendir, discipline)
       else
-        _generate(@dimpl.py_filename, "openmdao_discipline.py.erb", gendir)
-        _generate(@dimpl.py_basefilename, "openmdao_discipline_base.py.erb", gendir)
+        _generate(@dimpl.py_filename, "openmdao_discipline.py.erb", _impl_dir(gendir))
+        _generate(@dimpl.py_basefilename, "openmdao_discipline_base.py.erb", _base_dir(gendir))
       end
     end
 
     # options: sqlite_filename=nil
     def _generate_sub_analysis(super_discipline, gendir, options = {})
       mda = super_discipline.sub_analysis
+      next_base_namespace = _sub_base_namespace(mda.impl.basename)
       sub_ogen = OpenmdaoGenerator.new(mda, server_host: @server_host, remote_ip: @remote_ip,
-        pkg_format: !@pkg_prefix.blank?, driver_name: @driver_name, driver_options: @driver_options)
-      gendir = File.join(gendir, mda.impl.basename)
-      Dir.mkdir(gendir) unless Dir.exist?(gendir)
+        pkg_format: !@pkg_prefix.blank?, driver_name: @driver_name, driver_options: @driver_options,
+        base_namespace: next_base_namespace)
+
+      sub_gendir = split_plain_mode? ? gendir : File.join(gendir, mda.impl.basename)
+      Dir.mkdir(sub_gendir) unless Dir.exist?(sub_gendir)
 
       # generate only analysis code: no script, no server
       opts = options.merge(with_run: false, with_server: false, with_runops: false, with_src_dir: false)
-      sub_ogen._generate_code(gendir, opts)
+      sub_ogen._generate_code(sub_gendir, opts)
       @genfiles += sub_ogen.genfiles
     end
 
@@ -181,8 +209,8 @@ module WhatsOpt
       @sub_driver = OpenmdaoDriverFactory.new(@sub_impl.optimization_driver).create_driver
 
       if @sub_driver.optimization?
-        _generate(@dimpl.py_filename, "openmdao_discipline_mdo.py.erb", gendir)
-        _generate(@dimpl.py_basefilename, "openmdao_discipline_mdo_base.py.erb", gendir)
+        _generate(@dimpl.py_filename, "openmdao_discipline_mdo.py.erb", _impl_dir(gendir))
+        _generate(@dimpl.py_basefilename, "openmdao_discipline_mdo_base.py.erb", _base_dir(gendir))
       else
         # should be simple run_once driver
         if @sub_driver.class != WhatsOpt::OpenmdaoRunOnceDriver
@@ -192,8 +220,10 @@ module WhatsOpt
     end
 
     def _generate_main(gendir, options = {})
-      _generate(@impl.py_filename, "openmdao_analysis.py.erb", gendir)
-      _generate(@impl.py_basefilename, "openmdao_analysis_base.py.erb", gendir)
+      _generate(@impl.py_filename, "openmdao_analysis.py.erb", _impl_dir(gendir))
+      _generate(@impl.py_basefilename, "openmdao_analysis_base.py.erb", _base_dir(gendir))
+      _generate("__init__.py", "__init__.py.erb", _impl_dir(gendir)) if split_plain_mode?
+      _generate("__init__.py", "__init__.py.erb", _base_dir(gendir)) if split_plain_mode?
       _generate("__init__.py", "__init__.py.erb", gendir)
     end
 
@@ -248,6 +278,36 @@ module WhatsOpt
       _generate(".gitignore", "package/gitignore.erb", gendir, no_comment: true)
       _generate("README.md", "package/README.md.erb", gendir, no_comment: true)
       _generate("pyproject.toml", "package/pyproject.toml.erb", gendir, no_comment: true)
+    end
+
+  private
+    def _impl_dir(gendir)
+      return gendir unless split_plain_mode?
+
+      dir = File.join(gendir, "impl")
+      Dir.mkdir(dir) unless Dir.exist?(dir)
+      dir
+    end
+
+    def _base_dir(gendir)
+      return gendir unless split_plain_mode?
+
+      dir = File.join(gendir, "base")
+      Dir.mkdir(dir) unless Dir.exist?(dir)
+      @base_namespace.split("/").each do |segment|
+        next if segment.blank?
+
+        dir = File.join(dir, segment)
+        Dir.mkdir(dir) unless Dir.exist?(dir)
+      end
+      dir
+    end
+
+    def _sub_base_namespace(sub_name)
+      return "" unless split_plain_mode?
+      return sub_name if @base_namespace.blank?
+
+      File.join(@base_namespace, sub_name)
     end
   end
 end

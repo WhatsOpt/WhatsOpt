@@ -4,7 +4,11 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 
 from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_full_modulename %> import <%= @impl.py_classname %>
+<% if @generator.split_plain_mode? -%>
+from <%= @generator.impl_import_prefix %><%= @impl.py_modulename %> import <%= @impl.py_classname %> as <%= @impl.py_classname %>Original
+<% else -%>
 from <%= @pkg_prefix %><%= @impl.py_full_modulename %> import <%= @impl.py_classname %> as <%= @impl.py_classname %>Original
+<% end -%>
 <% @mda.all_plain_disciplines.each do |disc| %>
 <% if !disc.local?(@remote_ip) or @remote %>
 from .remote_discipline import Remote<%= disc.impl.py_classname %>

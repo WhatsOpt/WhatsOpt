@@ -9,7 +9,7 @@ from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %>_proxy im
 <% elsif @remote -%>
 from <%= @pkg_prefix %><%= @server_module %>.<%= @impl.py_modulename %>_proxy import <%= @impl.py_classname %>Proxy as <%= @impl.py_classname %>
 <% else -%>
-from <%= @pkg_prefix %><%= @impl.py_modulename %> import <%= @impl.py_classname %>
+from <%= @generator.impl_import_prefix %><%= @impl.py_modulename %> import <%= @impl.py_classname %>
 <% end -%>
 
 from optparse import OptionParser

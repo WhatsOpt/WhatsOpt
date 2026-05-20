@@ -86,17 +86,17 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   end
 
   test "should maintain a list of generated filepaths without server" do
-    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
-                "propulsion.py", "propulsion_base.py",
+    expected = ["__init__.py", "base/__init__.py", "base/aerodynamics_base.py", "base/cicav_base.py",
+                "base/geometry_base.py", "base/propulsion_base.py", "impl/__init__.py", "impl/aerodynamics.py", "impl/cicav.py",
+                "impl/geometry.py", "impl/propulsion.py", "mda_init.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"]
     _assert_file_generation expected
   end
 
   test "should maintain a list of generated filepaths with egmdo" do
-    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
-                "propulsion.py", "propulsion_base.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_egdoe.py"] + [
+    expected = ["__init__.py", "base/__init__.py", "base/aerodynamics_base.py", "base/cicav_base.py",
+                "base/geometry_base.py", "base/propulsion_base.py", "impl/__init__.py", "impl/aerodynamics.py", "impl/cicav.py",
+                "impl/geometry.py", "impl/propulsion.py", "mda_init.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_egdoe.py"] + [
                 "egmdo/__init__.py", "egmdo/algorithms.py", "egmdo/cicav_egmda.py", "egmdo/doe_factory.py",
                 "egmdo/gp_factory.py", "egmdo/random_analysis.py", "egmdo/random_vec_analysis.py",
                 "run_egmda.py", "run_egmdo.py", "run_screening.py"
@@ -107,34 +107,35 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
   test "should maintain a list of generated filepaths without server and without optim" do
     obj = disciplines(:geometry).output_variables.where(name: "obj")
     Connection.where(from: obj).update(role: WhatsOpt::Variable::RESPONSE_ROLE)
-    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
-                "propulsion.py", "propulsion_base.py",
+    expected = ["__init__.py", "base/__init__.py", "base/aerodynamics_base.py", "base/cicav_base.py",
+                "base/geometry_base.py", "base/propulsion_base.py", "impl/__init__.py", "impl/aerodynamics.py", "impl/cicav.py",
+                "impl/geometry.py", "impl/propulsion.py", "mda_init.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"]
     _assert_file_generation expected
   end
 
   test "should maintain a list of generated filepaths with unittests" do
-    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
-                "propulsion.py", "propulsion_base.py",
+    expected = ["__init__.py", "base/__init__.py", "base/aerodynamics_base.py", "base/cicav_base.py",
+                "base/geometry_base.py", "base/propulsion_base.py", "impl/__init__.py", "impl/aerodynamics.py", "impl/cicav.py",
+                "impl/geometry.py", "impl/propulsion.py", "mda_init.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"] +
                 ["tests/test_aerodynamics.py", "tests/test_geometry.py", "tests/test_propulsion.py"]
     _assert_file_generation expected, with_unittests: true
   end
 
   test "should maintain a list of generated filepaths with optimization" do
-    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py",
-                "propulsion.py", "propulsion_base.py",
+    expected = ["__init__.py", "base/__init__.py", "base/aerodynamics_base.py", "base/cicav_base.py",
+                "base/geometry_base.py", "base/propulsion_base.py", "impl/__init__.py", "impl/aerodynamics.py", "impl/cicav.py",
+                "impl/geometry.py", "impl/propulsion.py", "mda_init.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"]
     _assert_file_generation expected
   end
 
   test "should maintain a list of generated filepaths with server" do
     skip "Apache Thrift not installed" unless thrift?
-    expected = ["__init__.py", "aerodynamics.py", "aerodynamics_base.py", "cicav.py",
-                "cicav_base.py", "geometry.py", "geometry_base.py", "mda_init.py", "propulsion.py", "propulsion_base.py",
+    expected = ["__init__.py", "base/__init__.py", "base/aerodynamics_base.py", "base/cicav_base.py",
+                "base/geometry_base.py", "base/propulsion_base.py", "impl/__init__.py", "impl/aerodynamics.py", "impl/cicav.py",
+                "impl/geometry.py", "impl/propulsion.py", "mda_init.py",
                 "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py"] +
                 ["run_server.py", "server/__init__.py", "server/analysis.thrift", "server/cicav/__init__.py",
                 "server/cicav/Cicav-remote", "server/cicav/Cicav.py",
@@ -312,13 +313,13 @@ class OpenmdaoGeneratorTest < ActiveSupport::TestCase
       ogen._generate_code dir
       dirpath = Pathname.new(dir)
       basenames = ogen.genfiles.map { |f| Pathname.new(f).relative_path_from(dirpath).to_s }.sort
-      expected = (["__init__.py", "disc.py", "disc_base.py", "inner/__init__.py", "inner/inner.py",
-        "inner/inner_base.py", "inner/plain_discipline.py",
-        "inner/plain_discipline_base.py", "mda_init.py", "outerpkg.py", "outerpkg_base.py", "run_mda.py",
-        "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "server/__init__.py",
+      expected = (["__init__.py", "base/__init__.py", "base/disc_base.py", "base/inner/__init__.py", "base/inner/inner_base.py",
+        "base/inner/plain_discipline_base.py", "base/outerpkg_base.py", "base/vacant_discipline_base.py", "impl/__init__.py",
+        "impl/disc.py", "impl/inner.py", "impl/outerpkg.py", "impl/plain_discipline.py", "impl/vacant_discipline.py",
+        "mda_init.py", "run_mda.py", "run_mdo.py", "run_doe.py", "run_screening.py", "run_server.py", "server/__init__.py",
         "server/analysis.thrift", "server/discipline_proxy.py", "server/outerpkg/Outerpkg-remote",
         "server/outerpkg/Outerpkg.py", "server/outerpkg/__init__.py", "server/outerpkg/constants.py", "server/outerpkg/ttypes.py",
-        "server/outerpkg_conversions.py", "server/outerpkg_proxy.py", "vacant_discipline.py", "vacant_discipline_base.py",
+        "server/outerpkg_conversions.py", "server/outerpkg_proxy.py",
         "server/remote_discipline.py"]).sort
       assert_equal expected, basenames
     end

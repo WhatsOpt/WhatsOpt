@@ -17,16 +17,24 @@ from openmdao.utils.general_utils import ensure_compatible
 <% @mda.sub_analyses.each do |a| -%>
 <% if a.super_discipline.is_sub_optimization? %>
 # sub optimization
-from <%= @pkg_prefix %><%= a.super_discipline.impl.py_modulename %>_mdo import <%= a.super_discipline.impl.py_classname %>Mdo
+from <%= @generator.impl_import_prefix %><%= a.super_discipline.impl.py_modulename %>_mdo import <%= a.super_discipline.impl.py_classname %>Mdo
 <% else %> 
 # <%= a.super_discipline.type %>
+<% if @generator.split_plain_mode? -%>
+from <%= @generator.impl_import_prefix %><%= a.impl.py_modulename %> import <%= a.impl.py_classname %>
+<% else -%>
 from <%= @pkg_prefix %><%= a.impl.py_full_modulename %> import <%= a.impl.py_classname %>
+<% end -%>
 <% end %>
 <% end -%>
 
 <% @mda.all_plain_disciplines.each do |disc| -%>
 <% if @check_only || disc.local?(@remote_ip) -%>
+<% if @generator.split_plain_mode? -%>
+from <%= @generator.impl_import_prefix %><%= disc.impl.py_modulename %> import <%= disc.impl.py_classname %> 
+<% else -%>
 from <%= @pkg_prefix %><%= disc.impl.py_full_modulename %> import <%= disc.impl.py_classname %> 
+<% end -%>
 <% else %>
 from <%= @pkg_prefix %><%= @server_module %>.remote_discipline import Remote<%= disc.impl.py_classname %>
 <% end -%>
