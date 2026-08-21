@@ -11388,9 +11388,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shakapacker@npm:^10.3.0":
-  version: 10.3.0
-  resolution: "shakapacker@npm:10.3.0"
+"shakapacker@npm:10.3.1":
+  version: 10.3.1
+  resolution: "shakapacker@npm:10.3.1"
   dependencies:
     js-yaml: "npm:^4.1.0"
     pack-config-diff: "npm:^0.1.0"
@@ -11483,7 +11483,7 @@ __metadata:
   bin:
     diff-bundler-config: package/bin/diff-bundler-config.cjs
     shakapacker-config: package/bin/shakapacker-config.cjs
-  checksum: 10c0/3d600229bebc91e4fe80235ec4ebc9083b117a047f886b3cafbee7c2f7f52c121ad73cd69b2aaca47901fbbc0b86ca06f337cada21b4ffcfe5a7dfb8cf3096d4
+  checksum: 10c0/0c7acd5022b0ab7aa694e94ae0d1dcac5734d6f5a574ffa0c9f72661a351b963f967c026ca769f0b73a8bfb512aa0e7c9f9bac1022b3bd6571329e20fb5483e6
   languageName: node
   linkType: hard
 
@@ -13061,7 +13061,7 @@ __metadata:
     react-promise-tracker: "npm:^2.1.1"
     regenerator-runtime: "npm:^0.14.1"
     save-svg-as-png: "npm:^1.4.17"
-    shakapacker: "npm:^10.3.0"
+    shakapacker: "npm:10.3.1"
     swagger-ui-react: "npm:^5.32.8"
     terser-webpack-plugin: "npm:5.6.1"
     trix: "npm:^2.1.19"
