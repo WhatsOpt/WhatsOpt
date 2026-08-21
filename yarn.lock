@@ -13070,7 +13070,7 @@ __metadata:
     webpack-cli: "npm:^7.2.1"
     webpack-dev-server: "npm:^5.2.6"
     webpack-merge: "npm:^6.0.1"
-    xdsmjs: "npm:^2.0.1"
+    xdsmjs: "npm:^2.1.0"
   languageName: unknown
   linkType: soft
 
@@ -13233,15 +13233,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xdsmjs@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "xdsmjs@npm:2.0.1"
+"xdsmjs@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "xdsmjs@npm:2.1.0"
   dependencies:
     d3-color: "npm:^3.1.0"
     d3-fetch: "npm:^3.0.1"
     d3-selection: "npm:^3.0.0"
     d3-transition: "npm:^3.0.1"
-  checksum: 10c0/c6e4bc8fc8b32259c2a17c96b50d19a81e5ad9598c7eb7384722958af99dad829c47f4cdcc3410b1a9afe8ba37f27f46baf2204f62f1a94ad59f629b11406cc8
+  checksum: 10c0/3c0f412254eeb99a30cd3444bbb2a6a3ea4efb5b944aa36d5c7d1b05c2e250122a585f589a069d2482325fca3cfb13c1e582c1602ee023295d4f225ef6475f3f
   languageName: node
   linkType: hard
 
