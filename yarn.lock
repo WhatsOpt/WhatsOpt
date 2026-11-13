@@ -5,24 +5,24 @@ __metadata:
   version: 9
   cacheKey: 10c0
 
-"@atlaskit/pragmatic-drag-and-drop-hitbox@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@atlaskit/pragmatic-drag-and-drop-hitbox@npm:1.2.0"
+"@atlaskit/pragmatic-drag-and-drop-hitbox@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@atlaskit/pragmatic-drag-and-drop-hitbox@npm:3.0.0"
   dependencies:
-    "@atlaskit/pragmatic-drag-and-drop": "npm:^1.8.0"
+    "@atlaskit/pragmatic-drag-and-drop": "npm:^4.0.0"
     "@babel/runtime": "npm:^7.0.0"
-  checksum: 10c0/5e89dd4b0b21a8f573ee8de9ce63f010d3c8bf69d51cead53cc22e9df749583e89e793595c0317fc6c001613563c24f52d765c0d41e940ec3a1f242842882573
+  checksum: 10c0/7b0626d75084aef088d6e3214372e0eeee17fabe316ee4a5d6ba34a1fbd2ddaade625d6109e96ee7dce69950c566407051f4e4935c50e191716b48f2dec30871
   languageName: node
   linkType: hard
 
-"@atlaskit/pragmatic-drag-and-drop@npm:^1.8.0, @atlaskit/pragmatic-drag-and-drop@npm:^1.8.1":
-  version: 1.8.1
-  resolution: "@atlaskit/pragmatic-drag-and-drop@npm:1.8.1"
+"@atlaskit/pragmatic-drag-and-drop@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@atlaskit/pragmatic-drag-and-drop@npm:4.0.0"
   dependencies:
     "@babel/runtime": "npm:^7.0.0"
     bind-event-listener: "npm:^3.0.0"
     raf-schd: "npm:^4.0.3"
-  checksum: 10c0/0103a7b317b4716f370ae50287469c5339f13e6b511efda6946658ab193c8fec7d4359e5e61ba3ecff4cf7466c231bab1c72c1705f3451155b827ef56fb3e054
+  checksum: 10c0/07ade5fd8210df4631907fa55d1519ffd5ee3886c4a2bc4d250f9f186926d7def37e105a7e25533db7406437dce126d9d577f18c55c2128dac5ca2bf13fbc3ce
   languageName: node
   linkType: hard
 
@@ -5290,13 +5290,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "cookie@npm:1.1.1"
-  checksum: 10c0/79c4ddc0fcad9c4f045f826f42edf54bcc921a29586a4558b0898277fa89fb47be95bc384c2253f493af7b29500c830da28341274527328f18eba9f58afa112c
-  languageName: node
-  linkType: hard
-
 "cookie@npm:~0.7.1":
   version: 0.7.2
   resolution: "cookie@npm:0.7.2"
@@ -7453,10 +7446,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globals@npm:^16.5.0":
-  version: 16.5.0
-  resolution: "globals@npm:16.5.0"
-  checksum: 10c0/615241dae7851c8012f5aa0223005b1ed6607713d6813de0741768bd4ddc39353117648f1a7086b4b0fa45eae733f1c0a0fe369aa4e543bb63f8de8990178ea9
+"globals@npm:^17.14.0":
+  version: 17.14.0
+  resolution: "globals@npm:17.14.0"
+  checksum: 10c0/422d17c24e87170d4aa566b97a53339ae451c2f4d78512594a7ca951cdb939bc4a85c10071e6dcf77ca63de48713a77f2e71eb9214e44880233dff2090e92731
   languageName: node
   linkType: hard
 
@@ -10786,15 +10779,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-plotly.js@npm:^2.6.0":
-  version: 2.6.0
-  resolution: "react-plotly.js@npm:2.6.0"
-  dependencies:
-    prop-types: "npm:^15.8.1"
+"react-plotly.js@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "react-plotly.js@npm:4.1.0"
   peerDependencies:
-    plotly.js: ">1.34.0"
-    react: ">0.13.0"
-  checksum: 10c0/9b5ba8e33782daa9624d79295975d08d4c7581bac41d67d497eec0a306e4d030465a1e8282fab145bc02705fe96262f6fb0d214133657c480982fc268763644a
+    plotly.js: ">=3.0.0"
+    react: ^18.0.0 || ^19.0.0
+  checksum: 10c0/93d13f474f1b0ec3781db4cddb36ca99b8354f444fb3c2eaffb16d4b7b02302ec6c5fe30bafba9b56565e90af5480bfd22f6664c33fdd455ddde9cc235ed5ac5
   languageName: node
   linkType: hard
 
@@ -13268,8 +13259,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "whatsopt@workspace:."
   dependencies:
-    "@atlaskit/pragmatic-drag-and-drop": "npm:^1.8.1"
-    "@atlaskit/pragmatic-drag-and-drop-hitbox": "npm:^1.2.0"
+    "@atlaskit/pragmatic-drag-and-drop": "npm:^4.0.0"
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "npm:^3.0.0"
     "@babel/core": "npm:^7.29.13"
     "@babel/plugin-transform-runtime": "npm:^7.29.7"
     "@babel/preset-env": "npm:^7.29.14"
@@ -13290,7 +13281,6 @@ __metadata:
     bootstrap: "npm:^5.3.9"
     buffer: "npm:^6.0.3"
     compression-webpack-plugin: "npm:^12.0.0"
-    cookie: "npm:^1.1.1"
     core-js: "npm:^3.51.0"
     css-loader: "npm:^7.1.5"
     css-minimizer-webpack-plugin: "npm:^8.0.0"
@@ -13305,7 +13295,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.1.1"
     expose-loader: "npm:^5.0.1"
-    globals: "npm:^16.5.0"
+    globals: "npm:^17.14.0"
     ify-loader: "npm:^1.1.0"
     immutability-helper: "npm:^3.1.1"
     jquery: "npm:^3.7.1"
@@ -13319,7 +13309,7 @@ __metadata:
     react-bootstrap: "npm:^2.10.10"
     react-bootstrap-typeahead: "npm:^7.0.0-rc.5"
     react-dom: "npm:^19.3.1"
-    react-plotly.js: "npm:^2.6.0"
+    react-plotly.js: "npm:^4.1.0"
     react-promise-tracker: "npm:^2.1.1"
     regenerator-runtime: "npm:^0.14.1"
     save-svg-as-png: "npm:^1.4.17"
