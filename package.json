@@ -5,11 +5,11 @@
   "dependencies": {
     "@atlaskit/pragmatic-drag-and-drop": "^4.0.0",
     "@atlaskit/pragmatic-drag-and-drop-hitbox": "^3.0.0",
-    "@babel/core": "^7.29.13",
-    "@babel/plugin-transform-runtime": "^7.29.7",
-    "@babel/preset-env": "^7.29.14",
-    "@babel/preset-react": "^7.29.7",
-    "@babel/runtime": "^7.29.14",
+    "@babel/core": "^8.1.2",
+    "@babel/plugin-transform-runtime": "^8.1.2",
+    "@babel/preset-env": "^8.0.7",
+    "@babel/preset-react": "^8.0.1",
+    "@babel/runtime": "^8.1.2",
     "@popperjs/core": "^2.11.8",
     "@rails/actiontext": "^8.1.401",
     "@rails/ujs": "^7.1.600",
@@ -83,7 +83,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
     "prettier": "^3.10.1",
-    "webpack-dev-server": "^5.2.7"
+    "webpack-dev-server": "^6.1.0"
   },
   "packageManager": "yarn@4.14.1"
 }
