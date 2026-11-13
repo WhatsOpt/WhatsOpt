@@ -10,4 +10,8 @@ Plotly.register([
   require('plotly.js/lib/histogram'),
 ]);
 
+// plotly.js >= 4 shows an "Upload to Cloud" button sending data to cloud.plotly.com:
+// keep it disabled as in plotly.js 3.
+Plotly.setPlotConfig({ showSendToCloud: false, plotlyServerURL: '' });
+
 export default Plotly;
