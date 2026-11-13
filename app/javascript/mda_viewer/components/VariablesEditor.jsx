@@ -1,13 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  columnFilteringFeature,
+  columnVisibilityFeature,
   createColumnHelper,
+  createFilteredRowModel,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  filterFn_includesString,
   flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  useReactTable,
+  globalFilteringFeature,
+  rowPaginationFeature,
+  rowSortingFeature,
+  sortFn_alphanumeric,
+  sortFn_basic,
+  sortFn_datetime,
+  sortFn_text,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { Tooltip } from 'bootstrap';
 import { RIEInput, RIESelect } from './riek/src';
@@ -316,21 +326,41 @@ const defaultColumn = {
   cell: (info) => EditableCell(info),
 };
 
+// Table features (react-table v9 requires explicit registration).
+// Sort/filter fns are the built-ins resolved by the default 'auto' mode.
+const features = tableFeatures({
+  columnVisibilityFeature,
+  rowSortingFeature,
+  columnFilteringFeature,
+  globalFilteringFeature,
+  rowPaginationFeature,
+  filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  filterFns: { includesString: filterFn_includesString },
+  sortFns: {
+    alphanumeric: sortFn_alphanumeric,
+    text: sortFn_text,
+    datetime: sortFn_datetime,
+    basic: sortFn_basic,
+  },
+});
+
 /* eslint-disable react/jsx-props-no-spreading */
 function Table({ columns, data, onConnectionChange, isEditing, limited, useScaling }) {
   const [sorting, setSorting] = React.useState([]);
   const [globalFilter, setGlobalFilter] = React.useState('');
-  const [columnVisibility, setColumnVisibility] = React.useState({});
 
   const cellToFocus = React.useRef({ index: null, id: null });
 
-  columnVisibility.active = isEditing;
-  columnVisibility.desc = isEditing;
-  columnVisibility.type = isEditing;
-
-  columnVisibility.ref = useScaling;
-  columnVisibility.ref0 = useScaling;
-  columnVisibility.res_ref = useScaling;
+  const columnVisibility = {
+    active: isEditing,
+    desc: isEditing,
+    type: isEditing,
+    ref: useScaling,
+    ref0: useScaling,
+    res_ref: useScaling,
+  };
 
   //            From, Name, Role, Shape, Units, Init, Lower, Upper, UQ
   let colWidths = ['10', '30', '10', '5', '5', '10', '10', '10', '10'];
@@ -352,16 +382,15 @@ function Table({ columns, data, onConnectionChange, isEditing, limited, useScali
     style: { tableLayout: table_layout },
   };
 
-  const table = useReactTable({
+  const table = useTable({
+    features,
     data,
     columns,
     defaultColumn,
-    initialState: {
-      columnVisibility,
-    },
     state: {
       sorting,
       globalFilter,
+      columnVisibility,
     },
     meta: {
       isEditing,
@@ -372,11 +401,6 @@ function Table({ columns, data, onConnectionChange, isEditing, limited, useScali
     },
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   });
 
   const canPreviousPage = table.getCanPreviousPage();
@@ -387,8 +411,7 @@ function Table({ columns, data, onConnectionChange, isEditing, limited, useScali
   const { nextPage } = table;
   const { previousPage } = table;
   const { setPageSize } = table;
-  const { pageIndex } = table.getState().pagination;
-  const { pageSize } = table.getState().pagination;
+  const { pageIndex, pageSize } = table.state.pagination;
 
   return (
     <div className="container-fluid">

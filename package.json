@@ -17,7 +17,7 @@
     "@rjsf/react-bootstrap": "^6.11.1",
     "@rjsf/utils": "^6.11.1",
     "@rjsf/validator-ajv8": "^6.11.1",
-    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-table": "^9.3.1",
     "axios": "^1.21.1",
     "babel-loader": "^10.1.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
