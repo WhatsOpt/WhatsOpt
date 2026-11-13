@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import reloadAsScript from '../utils/reloadAsScript';
 
 class AnalysesIndex {
   constructor(relRoot, apiKey, userId) {
@@ -36,7 +37,7 @@ class AnalysesIndex {
           }, SPINNER_TIMEOUT);
         },
         success() {
-          $.getScript(this.href, () => {
+          reloadAsScript(() => {
             if (timeout) {
               clearTimeout(timeout);
             }
@@ -97,7 +98,7 @@ class AnalysesIndex {
             }, SPINNER_TIMEOUT);
           },
           success() {
-            $.getScript(this.href, () => {
+            reloadAsScript(() => {
               if (timeout) {
                 clearTimeout(timeout);
               }
