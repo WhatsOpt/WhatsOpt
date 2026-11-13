@@ -9,16 +9,13 @@ const options = {
   resolve: {
     extensions: ['.css'],
     fallback: { stream: false },
-    alias: {
-      jquery: 'jquery/src/jquery',
-    },
   },
 
   // Add dependency needed by swagger ui
   plugins: [
     new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
+      $: ['jquery', 'default'],
+      jQuery: ['jquery', 'default'],
       Buffer: ['buffer', 'Buffer'],
     }),
   ],
@@ -29,13 +26,6 @@ const options = {
       {
         test: /\.js$/,
         loader: 'ify-loader',
-      },
-      {
-        test: require.resolve('jquery'),
-        loader: 'expose-loader',
-        options: {
-          exposes: ['$', 'jQuery'],
-        },
       },
       {
         test: /\.m?js/, // fix:issue: https://github.com/webpack/webpack/issues/11467

@@ -6494,15 +6494,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expose-loader@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "expose-loader@npm:5.0.1"
-  peerDependencies:
-    webpack: ^5.0.0
-  checksum: 10c0/2b5a0036526b40a9a2136b8cc16dfb3e9b174f651c83c2b29a0e5df1a298895dfec59fc700e07c12ab9aa64acb9be044a0ab126e4e298c0431e515c02c787c05
-  languageName: node
-  linkType: hard
-
 "express@npm:^5.2.1":
   version: 5.3.0
   resolution: "express@npm:5.3.0"
@@ -8192,10 +8183,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery@npm:^3.7.1":
-  version: 3.7.1
-  resolution: "jquery@npm:3.7.1"
-  checksum: 10c0/808cfbfb758438560224bf26e17fcd5afc7419170230c810dd11f5c1792e2263e2970cca8d659eb84fcd9acc301edb6d310096e450277d54be4f57071b0c82d9
+"jquery@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "jquery@npm:4.0.0"
+  checksum: 10c0/06d8d0f51121af5a691f8b59c74823157bb5b60eea915b30eaa920d6c0ffd91e60ba81e9b97bd8203f331f9dd8d0ec9a4b010935ea314bdd2f15453c29bc780b
   languageName: node
   linkType: hard
 
@@ -12794,11 +12785,10 @@ __metadata:
     eslint-plugin-jsx-a11y: "npm:^6.10.2"
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.1.1"
-    expose-loader: "npm:^5.0.1"
     globals: "npm:^17.14.0"
     ify-loader: "npm:^1.1.0"
     immutability-helper: "npm:^3.1.1"
-    jquery: "npm:^3.7.1"
+    jquery: "npm:^4.0.0"
     mini-css-extract-plugin: "npm:^2.10.2"
     plotly.js: "npm:^3.7.0"
     pnp-webpack-plugin: "npm:1.7.0"
