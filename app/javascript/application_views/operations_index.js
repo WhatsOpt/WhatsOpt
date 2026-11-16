@@ -1,6 +1,10 @@
 import { Modal } from 'bootstrap';
 import { patchJson } from '../utils/dom';
 
+/**
+ * Display a dismissible error alert above the operations list.
+ * @param {string} message - error message (inserted as text)
+ */
 function showError(message) {
   const placeHolder = document.getElementById('errorPlaceHolder');
   const alert = document.createElement('div');

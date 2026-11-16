@@ -1,7 +1,13 @@
 // Small DOM/HTTP helpers for server-rendered pages (no jQuery).
 
-// PATCH a JSON body to the WhatsOpt API with token authentication.
-// Rejects with an Error carrying the API error message when the request fails.
+/**
+ * PATCH a JSON body to the WhatsOpt API with token authentication.
+ * @param {string} url - API endpoint URL
+ * @param {string} apiKey - user API key
+ * @param {object} body - payload, sent as JSON
+ * @returns {Promise<Response>} the successful response
+ * @throws {Error} with the API error message when the request fails
+ */
 export async function patchJson(url, apiKey, body) {
   const response = await fetch(url, {
     method: 'PATCH',
@@ -24,8 +30,13 @@ export async function patchJson(url, apiKey, body) {
   return response;
 }
 
-// Re-fetch the current page and replace the content of the element(s)
-// matching the given selector with their freshly rendered version.
+/**
+ * Re-fetch the current page and replace the content of the element
+ * matching the given selector with its freshly rendered version.
+ * @param {string} selector - CSS selector of the element to refresh
+ * @returns {Promise<void>}
+ * @throws {Error} when the page cannot be fetched (callers must catch)
+ */
 export async function refreshFromCurrentPage(selector) {
   const response = await fetch(window.location.href, { headers: { Accept: 'text/html' } });
   if (!response.ok) {
@@ -39,10 +50,14 @@ export async function refreshFromCurrentPage(selector) {
   }
 }
 
-// Read a data-* attribute value converted like jQuery .data() did:
-// "true"/"false"/"null", numbers and JSON objects/arrays are parsed,
-// anything else is returned as a string (undefined if attribute is missing).
-// The key is the camelCase dataset name (data-is-editing -> 'isEditing').
+/**
+ * Read a data-* attribute value converted like jQuery .data() did:
+ * "true"/"false"/"null", numbers and JSON objects/arrays are parsed,
+ * anything else is returned as a string.
+ * @param {HTMLElement} element - element holding the data-* attribute
+ * @param {string} key - camelCase dataset name (data-is-editing -> 'isEditing')
+ * @returns {*} converted value, undefined if the attribute is missing
+ */
 export function readData(element, key) {
   const value = element.dataset[key];
   if (value === undefined) return undefined;
@@ -50,7 +65,7 @@ export function readData(element, key) {
   if (value === 'false') return false;
   if (value === 'null') return null;
   if (value !== '' && String(+value) === value) return +value;
-  if (/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/.test(value)) {
+  if (/^(?:\{.*\}|\[.*\])$/s.test(value)) {
     try {
       return JSON.parse(value);
     } catch {
@@ -60,7 +75,11 @@ export function readData(element, key) {
   return value;
 }
 
-// Escape text to be inserted in HTML markup.
+/**
+ * Escape text to be inserted in HTML markup.
+ * @param {*} text - text to escape (converted to string)
+ * @returns {string} HTML-escaped text
+ */
 export function escapeHtml(text) {
   return String(text)
     .replaceAll('&', '&amp;')
@@ -70,7 +89,11 @@ export function escapeHtml(text) {
     .replaceAll("'", '&#39;');
 }
 
-// Show or hide every element matching the selector (inline display style).
+/**
+ * Show or hide every element matching the selector (inline display style).
+ * @param {string} selector - CSS selector
+ * @param {boolean} visible - true to show, false to hide
+ */
 export function setVisible(selector, visible) {
   document.querySelectorAll(selector).forEach((el) => {
     // eslint-disable-next-line no-param-reassign
