@@ -115,6 +115,8 @@ class DistributionModal extends React.Component {
     } = this.props;
     this.state = { selected: -1, dists: DistributionModal._uqToState(uq).dists };
     this.visible = false;
+    this.listModalRef = React.createRef();
+    this.modalRef = React.createRef();
 
     this.getFormData = this.getFormData.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -122,54 +124,57 @@ class DistributionModal extends React.Component {
   }
 
   componentDidMount() {
-    const {
-      conn: { name },
-    } = this.props;
-    const listModal = document.getElementById(`distributionListModal-${name}`);
-    const modal = document.getElementById(`distributionModal-${name}`);
-    const onSelect = (i) => () => this.setState({ selected: i });
+    const listModal = this.listModalRef.current;
+    const modal = this.modalRef.current;
 
-    listModal?.addEventListener('show.bs.modal', () => {
-      const {
-        conn: { uq },
-      } = this.props;
-      const dists = DistributionModal._uqToState(uq);
-      this.setState(dists);
+    // Vector variable: list of distributions, one per component
+    listModal.addEventListener('show.bs.modal', () => {
       this.visible = true;
-      for (let i = 0; i < dists.dists.length; i += 1) {
-        document.getElementById(`${name}-${i}`)?.addEventListener('click', onSelect(i));
-      }
+      this.setState(this._freshState());
     });
-    listModal?.addEventListener('hidden.bs.modal', () => {
+    listModal.addEventListener('hidden.bs.modal', () => {
       this.visible = false;
     });
-    modal?.addEventListener('show.bs.modal', () => {
+
+    // Distribution edition: scalar variable is opened directly from the variables table
+    modal.addEventListener('show.bs.modal', () => {
       const {
         conn: { uq },
       } = this.props;
       if (uq.length === 1) {
-        const { dists } = DistributionModal._uqToState(uq);
-        this.setState({ selected: 0, dists });
         this.visible = true;
-        for (let i = 0; i < dists.length; i += 1) {
-          document.getElementById(`${name}-${i}`)?.addEventListener('click', onSelect(i));
-        }
+        this.setState({ ...this._freshState(), selected: 0 });
       }
-      const { selected } = this.state;
-      const varname = uq.length === 1 ? name : `${name}[${selected}]`;
-      modal.querySelector('.modal-title').textContent = `Distribution of ${varname}`;
     });
-    modal?.addEventListener('hidden.bs.modal', () => {
-      const {
-        conn: { uq },
-      } = this.props;
-      const dists = DistributionModal._uqToState(uq);
-      this.setState(dists);
+    // Discard unsaved changes
+    modal.addEventListener('hidden.bs.modal', () => {
+      this.setState(this._freshState(), () => {
+        this.visible = false;
+      });
     });
   }
 
-  shouldComponentUpdate() {
-    return this.visible;
+  shouldComponentUpdate(nextProps, nextState) {
+    // Hidden modals are not re-rendered on unrelated changes,
+    // but own state changes (selection, edition) are always rendered.
+    return this.visible || nextState !== this.state;
+  }
+
+  _freshState() {
+    const {
+      conn: { uq },
+    } = this.props;
+    return { dists: DistributionModal._uqToState(uq).dists };
+  }
+
+  // Edit distribution of the i-th component of a vector variable:
+  // render the selected component first, then switch modals.
+  editDistribution(i) {
+    this.visible = true;
+    this.setState({ ...this._freshState(), selected: i }, () => {
+      Modal.getOrCreateInstance(this.listModalRef.current).hide();
+      Modal.getOrCreateInstance(this.modalRef.current).show();
+    });
   }
 
   handleChange(data) {
@@ -230,11 +235,11 @@ class DistributionModal extends React.Component {
       return;
     }
     const {
-      conn: { id, name },
+      conn: { id },
       onConnectionChange,
     } = this.props;
     onConnectionChange(id, { distributions_attributes: [dists[selected]] });
-    Modal.getOrCreateInstance(document.getElementById(`distributionModal-${name}`)).hide();
+    Modal.getOrCreateInstance(this.modalRef.current).hide();
   }
 
   getFormData() {
@@ -262,7 +267,9 @@ class DistributionModal extends React.Component {
     const {
       conn: { name, uq },
     } = this.props;
+    const { selected } = this.state;
     const formData = this.getFormData();
+    const varname = uq.length === 1 ? name : `${name}[${selected}]`;
 
     const distributionModalItems = uq.map((dist, i) => (
       <div className="row" key={`${name}-${i}`}>
@@ -273,11 +280,8 @@ class DistributionModal extends React.Component {
             title="Edit"
             type="button"
             id={`${name}-${i}`}
-            data-varname={name}
-            data-coord={i}
-            data-bs-toggle="modal"
-            data-bs-target={`#distributionModal-${name}`}
             className="btn btn-sm"
+            onClick={() => this.editDistribution(i)}
           >
             <i className="fas fa-edit" />
           </button>
@@ -286,7 +290,11 @@ class DistributionModal extends React.Component {
     ));
     return (
       <div key={name}>
-        <div className="modal distribution-list-modal" id={`distributionListModal-${name}`}>
+        <div
+          className="modal distribution-list-modal"
+          id={`distributionListModal-${name}`}
+          ref={this.listModalRef}
+        >
           <div className="modal-dialog">
             <div className="modal-content">
               <div className="modal-header">
@@ -315,6 +323,7 @@ class DistributionModal extends React.Component {
         <div
           className="modal fade distribution-modal"
           id={`distributionModal-${name}`}
+          ref={this.modalRef}
           tabIndex="-1"
           role="dialog"
           aria-labelledby={`distributionModalLabel-${name}`}
@@ -324,7 +333,7 @@ class DistributionModal extends React.Component {
             <div className="modal-content">
               <div className="modal-header">
                 <h4 className="modal-title" id={`distributionModalLabel-${name}`}>
-                  Distribution of variable {name}
+                  Distribution of {varname}
                 </h4>
                 <button
                   type="button"
