@@ -9,7 +9,7 @@ on:
 jobs:
   tests:
     name: Tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -68,10 +68,10 @@ jobs:
           corepack prepare yarn@stable --activate
           corepack yarn --version
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 24
         uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24
           cache: yarn
       - name: Install dependencies
         run: corepack yarn install --immutable

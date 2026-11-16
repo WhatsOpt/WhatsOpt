@@ -6,6 +6,11 @@ import AnalysesIndex from '../application_views/analyses_index';
 import OperationsIndex from '../application_views/operations_index';
 import UserShow from '../application_views/users_show';
 
+// Global jQuery for .js.erb responses (run via reloadAsScript) and
+// for Bootstrap's jQuery plugin interface (e.g. $(...).modal()).
+window.$ = $;
+window.jQuery = $;
+
 // Views are used in corresponding views/**/*.html.erb files
 // in document_ready section.
 // Calling start() allow to attach js callbacks to DOM element

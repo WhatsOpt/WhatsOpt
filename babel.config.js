@@ -9,7 +9,6 @@ module.exports = function (api) {
         '@babel/preset-react',
         {
           development: !isProductionEnv,
-          useBuiltIns: true,
           runtime: 'automatic',
         },
       ],
@@ -21,7 +20,6 @@ module.exports = function (api) {
           removeImport: true,
         },
       ],
-      process.env.WEBPACK_SERVE && 'react-refresh/babel',
     ].filter(Boolean),
   };
 

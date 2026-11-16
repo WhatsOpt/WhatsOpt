@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import reloadAsScript from '../utils/reloadAsScript';
 
 class UserShow {
   constructor(relRoot, userId) {
@@ -20,7 +21,7 @@ class UserShow {
         },
         url: `${relRoot}/api/v1/users/${userId}/api_key`,
         success() {
-          $.getScript(this.href);
+          reloadAsScript();
           return false;
         },
       });
