@@ -1,5 +1,6 @@
-import $ from 'jquery';
-import reloadAsScript from '../utils/reloadAsScript';
+import { patchJson, refreshFromCurrentPage, setVisible } from '../utils/dom';
+
+const SPINNER_TIMEOUT = 1500; // ms
 
 class AnalysesIndex {
   constructor(relRoot, apiKey, userId) {
@@ -8,111 +9,59 @@ class AnalysesIndex {
     this.userId = userId;
   }
 
-  start() {
+  // Save user settings then refresh the analyses list,
+  // showing the spinner if it takes some time.
+  async updateSettings(settings) {
     const { relRoot, apiKey, userId } = this;
-    const SPINNER_TIMEOUT = 1500; // ms
-    function setAnalysesListSettings() {
-      const query = $(this).data('analyses-query');
-      const order = $(this).data('analyses-order');
-      const filterElt = $('#user_settings_analyses_filter');
-      const filter = filterElt.val();
-      let timeout;
-      $.ajax({
-        type: 'PATCH',
-        xhrFields: { withCredentials: true },
-        headers: { Authorization: `Token ${apiKey}` },
-        url: `${relRoot}/api/v1/users/${userId}`,
-        data: {
-          user: {
-            settings: {
-              analyses_query: query,
-              analyses_order: order,
-              analyses_filter: filter,
-            },
-          },
-        },
-        beforeSend() {
-          timeout = setTimeout(() => {
-            $('.spinner').show();
-          }, SPINNER_TIMEOUT);
-        },
-        success() {
-          reloadAsScript(() => {
-            if (timeout) {
-              clearTimeout(timeout);
-            }
-            $('.spinner').hide();
-
-            // UX test: code below reset the search string
-            // // Reset filter
-            // if (filter) {
-            //   // document.getElementById('user_settings_analyses_filter').value = '';
-            //   filterElt.val('');
-            //   console.log('RESET');
-            //   console.log(filterElt.val());
-            //   $.ajax({
-            //     type: 'PATCH',
-            //     xhrFields: { withCredentials: true },
-            //     headers: { Authorization: `Token ${apiKey}` },
-            //     url: `${relRoot}/api/v1/users/${userId}`,
-            //     data: {
-            //       user: {
-            //         settings: {
-            //           analyses_filter: '',
-            //         },
-            //       },
-            //     },
-            //   });
-            // }
-          });
-        },
-      });
+    const timeout = setTimeout(() => setVisible('.spinner', true), SPINNER_TIMEOUT);
+    try {
+      await patchJson(`${relRoot}/api/v1/users/${userId}`, apiKey, { user: { settings } });
+      await refreshFromCurrentPage('#analyses');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      clearTimeout(timeout);
+      setVisible('.spinner', false);
     }
+  }
 
-    $('input[data-analyses-query]').on('click', setAnalysesListSettings);
-    $('input[data-analyses-order]').on('click', setAnalysesListSettings);
-    $('#analyses-filter').on('keypress', (event) => {
+  start() {
+    const filterElt = document.getElementById('user_settings_analyses_filter');
+
+    const setAnalysesListSettings = (event) => {
+      const { analysesQuery, analysesOrder } = event?.currentTarget?.dataset ?? {};
+      this.updateSettings({
+        analyses_query: analysesQuery,
+        analyses_order: analysesOrder,
+        analyses_filter: filterElt.value,
+      });
+    };
+
+    document
+      .querySelectorAll('input[data-analyses-query], input[data-analyses-order]')
+      .forEach((input) => input.addEventListener('click', setAnalysesListSettings));
+    document.getElementById('analyses-filter').addEventListener('keypress', (event) => {
       if (event.key === 'Enter') {
-        setAnalysesListSettings();
         // Cancel the default action, if needed
         event.preventDefault();
+        setAnalysesListSettings();
       }
     });
-    $('#btn_user_settings_analyses_filter').on('click', setAnalysesListSettings);
+    document
+      .getElementById('btn_user_settings_analyses_filter')
+      .addEventListener('click', setAnalysesListSettings);
 
-    let current_design_project_id = '<%= current_user.analyses_scope_design_project_id %>';
-
-    $('#designProjectScope').on('click', function select_project() {
-      const design_project_id = this.value;
-      let timeout;
-      if (design_project_id !== current_design_project_id) {
-        $.ajax({
-          type: 'PATCH',
-          xhrFields: { withCredentials: true },
-          headers: { Authorization: `Token ${apiKey}` },
-          url: `${relRoot}/api/v1/users/${userId}`,
-          data: { user: { settings: { analyses_scope_design_project_id: design_project_id } } },
-          beforeSend() {
-            timeout = setTimeout(() => {
-              $('.spinner').show();
-            }, SPINNER_TIMEOUT);
-          },
-          success() {
-            reloadAsScript(() => {
-              if (timeout) {
-                clearTimeout(timeout);
-              }
-              $('.spinner').hide();
-            });
-          },
-        }).always(() => {
-          current_design_project_id = design_project_id;
-        });
+    const projectSelect = document.getElementById('designProjectScope');
+    let currentDesignProjectId = projectSelect.dataset.designProjectScope || '';
+    projectSelect.addEventListener('change', () => {
+      const designProjectId = projectSelect.value;
+      if (designProjectId !== currentDesignProjectId) {
+        currentDesignProjectId = designProjectId;
+        this.updateSettings({ analyses_scope_design_project_id: designProjectId });
       }
     });
 
-    // hide spinner
-    $('.spinner').hide();
+    setVisible('.spinner', false);
   }
 }
 

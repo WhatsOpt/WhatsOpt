@@ -5,6 +5,7 @@ import MdaViewer from 'mda_viewer';
 import '@rails/actiontext';
 
 import WhatsOptApi from '../utils/WhatsOptApi';
+import { readData } from '../utils/dom';
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');
@@ -12,18 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .getElementsByName('relative-url-root')[0]
     .getAttribute('content');
 
-  // eslint-disable-next-line no-undef
-  const mdaViewerElt = $('#mda-viewer');
-  const mda = mdaViewerElt.data('mda');
-  const isEditing = mdaViewerElt.data('is-editing');
-  const apiKey = mdaViewerElt.data('api-key');
-  const members = mdaViewerElt.data('members');
-  const coOwners = mdaViewerElt.data('co-owners');
-  const currentUser = mdaViewerElt.data('current-user');
+  const mdaViewerElt = document.getElementById('mda-viewer');
+  const mda = readData(mdaViewerElt, 'mda');
+  const isEditing = readData(mdaViewerElt, 'isEditing');
+  const apiKey = readData(mdaViewerElt, 'apiKey');
+  const members = readData(mdaViewerElt, 'members');
+  const coOwners = readData(mdaViewerElt, 'coOwners');
+  const currentUser = readData(mdaViewerElt, 'currentUser');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot, mda.updated_at);
 
-  const root = createRoot(mdaViewerElt[0]);
+  const root = createRoot(mdaViewerElt);
   root.render(
     <MdaViewer
       mda={mda}

@@ -1,15 +1,9 @@
-import $ from 'jquery';
 import '@popperjs/core';
-import 'bootstrap';
+import { Modal } from 'bootstrap';
 import Rails from '@rails/ujs';
 import AnalysesIndex from '../application_views/analyses_index';
 import OperationsIndex from '../application_views/operations_index';
 import UserShow from '../application_views/users_show';
-
-// Global jQuery for .js.erb responses (run via reloadAsScript) and
-// for Bootstrap's jQuery plugin interface (e.g. $(...).modal()).
-window.$ = $;
-window.jQuery = $;
 
 // Views are used in corresponding views/**/*.html.erb files
 // in document_ready section.
@@ -23,20 +17,27 @@ window.App = {
 
 // Override default browser confirm dialog by bootstrap version
 Rails.confirm = (message, element) => {
-  const $element = $(element);
-  const $dialog = $('#confirmModal');
-  const $content = $dialog.find('#modal-content');
-  const $ok = $dialog.find('#ok-button');
-  $content.text(message);
-  $ok.on('click', (event) => {
-    event.preventDefault();
-    $dialog.modal('hide');
-    const old = Rails.confirm;
-    Rails.confirm = () => true;
-    $element.get(0).click();
-    Rails.confirm = old;
-  });
-  $dialog.modal('show');
+  const dialog = document.getElementById('confirmModal');
+  const modal = Modal.getOrCreateInstance(dialog);
+  dialog.querySelector('#modal-content').textContent = message;
+
+  // Replace the OK button to drop handlers from previous confirmations
+  const oldOk = dialog.querySelector('#ok-button');
+  const ok = oldOk.cloneNode(true);
+  oldOk.replaceWith(ok);
+  ok.addEventListener(
+    'click',
+    (event) => {
+      event.preventDefault();
+      modal.hide();
+      const old = Rails.confirm;
+      Rails.confirm = () => true;
+      element.click();
+      Rails.confirm = old;
+    },
+    { once: true }
+  );
+  modal.show();
   return false;
 };
 

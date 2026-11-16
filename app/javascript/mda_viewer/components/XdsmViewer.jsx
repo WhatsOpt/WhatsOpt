@@ -2,16 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import update from 'immutability-helper';
 import { XDSMjs, XDSM_V2 } from 'xdsmjs';
+import { escapeHtml } from '../../utils/dom';
 
 const DEFAULT_XDSM_VERSION = XDSM_V2;
 
 class XdsmViewer extends React.Component {
   static _setTooltips() {
     // bootstrap tooltip for connections
-    // eslint-disable-next-line no-undef
-    $('.ellipsized').attr('data-bs-toggle', 'tooltip');
-    // eslint-disable-next-line no-undef
-    $('.ellipsized').attr('data-bs-placement', 'right');
+    document.querySelectorAll('.ellipsized').forEach((el) => {
+      el.setAttribute('data-bs-toggle', 'tooltip');
+      el.setAttribute('data-bs-placement', 'right');
+    });
   }
 
   constructor(props) {
@@ -63,10 +64,6 @@ class XdsmViewer extends React.Component {
   }
 
   update(mda) {
-    // remove bootstrap tooltip
-    // eslint-disable-next-line no-undef
-    // $('.ellipsized').tooltip('dispose');
-
     const xdsmMda = update(mda, {
       nodes: { 0: { name: { $set: 'Driver' }, type: { $set: 'driver' } } },
     });
@@ -92,14 +89,17 @@ class XdsmViewer extends React.Component {
       if (node.link) {
         const edit = isEditing ? '/edit' : '';
         const link = `/analyses/${node.link.id}${edit}`;
-        // eslint-disable-next-line no-undef
-        const $label = $(`.id${node.id} tspan`);
-        const label = $label.text();
-        $label.html(`<a class='analysis-link' href="${api.url(link)}">${label}</a>`);
+        const tspans = document.querySelectorAll(`.id${node.id} tspan`);
+        const label = Array.from(tspans, (tspan) => tspan.textContent).join('');
+        tspans.forEach((tspan) => {
+          // eslint-disable-next-line no-param-reassign
+          tspan.innerHTML = `<a class='analysis-link' href="${escapeHtml(api.url(link))}">${escapeHtml(label)}</a>`;
+        });
       }
     });
-    // eslint-disable-next-line no-undef
-    $('.analysis-link').on('click', (e) => e.stopPropagation());
+    document.querySelectorAll('.analysis-link').forEach((a) => {
+      a.addEventListener('click', (e) => e.stopPropagation());
+    });
   }
 
   render() {

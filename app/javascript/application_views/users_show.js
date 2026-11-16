@@ -1,5 +1,4 @@
-import $ from 'jquery';
-import reloadAsScript from '../utils/reloadAsScript';
+import { patchJson, refreshFromCurrentPage } from '../utils/dom';
 
 class UserShow {
   constructor(relRoot, userId) {
@@ -9,22 +8,14 @@ class UserShow {
 
   start() {
     const { relRoot, userId } = this;
-    $('#reset-api-key').on('click', () => {
-      const api_key = $('#user-api-key').text();
-      $.ajax({
-        type: 'PATCH',
-        xhrFields: {
-          withCredentials: true,
-        },
-        headers: {
-          Authorization: `Token ${api_key}`,
-        },
-        url: `${relRoot}/api/v1/users/${userId}/api_key`,
-        success() {
-          reloadAsScript();
-          return false;
-        },
-      });
+    document.getElementById('reset-api-key').addEventListener('click', async () => {
+      const apiKey = document.getElementById('user-api-key').textContent.trim();
+      try {
+        await patchJson(`${relRoot}/api/v1/users/${userId}/api_key`, apiKey, {});
+        await refreshFromCurrentPage('#user-api-key');
+      } catch (error) {
+        console.error(error);
+      }
     });
   }
 }

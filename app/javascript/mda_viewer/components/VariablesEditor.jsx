@@ -23,6 +23,7 @@ import { Tooltip } from 'bootstrap';
 import { RIEInput, RIESelect } from './riek/src';
 import VariablesPagination from './VariablesPagination';
 import VariablesGlobalFilter from './VariablesGlobalFilter';
+import { Modal } from 'bootstrap';
 
 const CELL_CLASSNAME = 'react-table-cell';
 // const EDITABLE_CELL_CLASSNAME = 'bg-light';
@@ -184,11 +185,13 @@ function ButtonCell({ cell, row, column, table }) {
           style={{ paddingTop: 0, paddingBottom: 0 }}
           onClick={() => {
             if (shape === '1' || shape === '(1,)') {
-              // eslint-disable-next-line no-undef
-              $(`#distributionModal-${name}`).modal('show');
+              Modal.getOrCreateInstance(
+                document.getElementById(`distributionModal-${name}`)
+              ).show();
             } else {
-              // eslint-disable-next-line no-undef
-              $(`#distributionListModal-${name}`).modal('show');
+              Modal.getOrCreateInstance(
+                document.getElementById(`distributionListModal-${name}`)
+              ).show();
             }
           }}
         >

@@ -14,8 +14,6 @@ const options = {
   // Add dependency needed by swagger ui
   plugins: [
     new webpack.ProvidePlugin({
-      $: ['jquery', 'default'],
-      jQuery: ['jquery', 'default'],
       Buffer: ['buffer', 'Buffer'],
     }),
   ],

@@ -8016,13 +8016,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jquery@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "jquery@npm:4.0.0"
-  checksum: 10c0/06d8d0f51121af5a691f8b59c74823157bb5b60eea915b30eaa920d6c0ffd91e60ba81e9b97bd8203f331f9dd8d0ec9a4b010935ea314bdd2f15453c29bc780b
-  languageName: node
-  linkType: hard
-
 "js-file-download@npm:^0.4.12":
   version: 0.4.12
   resolution: "js-file-download@npm:0.4.12"
@@ -12545,7 +12538,6 @@ __metadata:
     globals: "npm:^17.14.0"
     ify-loader: "npm:^1.1.0"
     immutability-helper: "npm:^3.1.1"
-    jquery: "npm:^4.0.0"
     mini-css-extract-plugin: "npm:^2.10.2"
     plotly.js: "npm:^4.3.0"
     pnp-webpack-plugin: "npm:1.7.0"
