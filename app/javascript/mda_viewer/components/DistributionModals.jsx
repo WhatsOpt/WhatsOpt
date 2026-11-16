@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import validator from '@rjsf/validator-ajv8';
 import Form from '@rjsf/react-bootstrap';
 import update from 'immutability-helper';
+import { Modal } from 'bootstrap';
 
 const NORMAL = 'Normal';
 const BETA = 'Beta';
@@ -124,8 +125,11 @@ class DistributionModal extends React.Component {
     const {
       conn: { name },
     } = this.props;
-    // eslint-disable-next-line no-undef
-    $(`#distributionListModal-${name}`).on('show.bs.modal', () => {
+    const listModal = document.getElementById(`distributionListModal-${name}`);
+    const modal = document.getElementById(`distributionModal-${name}`);
+    const onSelect = (i) => () => this.setState({ selected: i });
+
+    listModal?.addEventListener('show.bs.modal', () => {
       const {
         conn: { uq },
       } = this.props;
@@ -133,18 +137,13 @@ class DistributionModal extends React.Component {
       this.setState(dists);
       this.visible = true;
       for (let i = 0; i < dists.dists.length; i += 1) {
-        // eslint-disable-next-line no-undef
-        $(`#${name}-${i}`).on('click', (/* e */) => {
-          this.setState({ selected: i });
-        });
+        document.getElementById(`${name}-${i}`)?.addEventListener('click', onSelect(i));
       }
     });
-    // eslint-disable-next-line no-undef
-    $(`#distributionListModal-${name}`).on('hidden.bs.modal', () => {
+    listModal?.addEventListener('hidden.bs.modal', () => {
       this.visible = false;
     });
-    // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).on('show.bs.modal', () => {
+    modal?.addEventListener('show.bs.modal', () => {
       const {
         conn: { uq },
       } = this.props;
@@ -153,19 +152,14 @@ class DistributionModal extends React.Component {
         this.setState({ selected: 0, dists });
         this.visible = true;
         for (let i = 0; i < dists.length; i += 1) {
-          // eslint-disable-next-line no-undef
-          $(`#${name}-${i}`).on('click', () => {
-            this.setState({ selected: i });
-          });
+          document.getElementById(`${name}-${i}`)?.addEventListener('click', onSelect(i));
         }
       }
       const { selected } = this.state;
       const varname = uq.length === 1 ? name : `${name}[${selected}]`;
-      // eslint-disable-next-line no-undef
-      $(`#distributionModal-${name} .modal-title`).text(`Distribution of ${varname}`);
+      modal.querySelector('.modal-title').textContent = `Distribution of ${varname}`;
     });
-    // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).on('hidden.bs.modal', () => {
+    modal?.addEventListener('hidden.bs.modal', () => {
       const {
         conn: { uq },
       } = this.props;
@@ -240,8 +234,7 @@ class DistributionModal extends React.Component {
       onConnectionChange,
     } = this.props;
     onConnectionChange(id, { distributions_attributes: [dists[selected]] });
-    // eslint-disable-next-line no-undef
-    $(`#distributionModal-${name}`).modal('hide');
+    Modal.getOrCreateInstance(document.getElementById(`distributionModal-${name}`)).hide();
   }
 
   getFormData() {

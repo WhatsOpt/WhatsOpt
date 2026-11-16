@@ -1,4 +1,20 @@
-import $ from 'jquery';
+import { Modal } from 'bootstrap';
+import { patchJson } from '../utils/dom';
+
+function showError(message) {
+  const placeHolder = document.getElementById('errorPlaceHolder');
+  const alert = document.createElement('div');
+  alert.className = 'alert alert-warning alert-dismissible';
+  alert.setAttribute('role', 'alert');
+  alert.textContent = message;
+  const close = document.createElement('button');
+  close.type = 'button';
+  close.className = 'btn-close';
+  close.setAttribute('data-bs-dismiss', 'alert');
+  close.setAttribute('aria-label', 'Close');
+  alert.appendChild(close);
+  placeHolder.replaceChildren(alert);
+}
 
 class OperationsIndex {
   constructor(relRoot) {
@@ -6,43 +22,34 @@ class OperationsIndex {
   }
 
   start() {
-    const relativeUrlRoot = this.relRoot;
-    const opeEdit = {};
-    const $modal = $('#editModal');
-    const $input = $("input[name='operation[name]']");
+    const { relRoot } = this;
+    const modalElt = document.getElementById('editModal');
+    const input = document.querySelector("input[name='operation[name]']");
+    let invoker = null;
 
-    $modal.on('show.bs.modal', (e) => {
-      opeEdit.invoker = $(e.relatedTarget);
-      opeEdit.id = opeEdit.invoker.data('ope-id');
-      opeEdit.name = opeEdit.invoker.data('ope-name');
-      opeEdit.apiKey = opeEdit.invoker.data('api-key');
-      $input.val(opeEdit.name);
-      $input.on('focus');
+    modalElt.addEventListener('show.bs.modal', (event) => {
+      invoker = event.relatedTarget;
+      input.value = invoker.dataset.opeName;
     });
+    modalElt.addEventListener('shown.bs.modal', () => input.focus());
 
-    $('button[data-save="true"]').on('click', () => {
-      const newName = $input.val();
-      $.ajax({
-        type: 'PATCH',
-        xhrFields: { withCredentials: true },
-        headers: { Authorization: `Token ${opeEdit.apiKey}` },
-        url: `${relativeUrlRoot}/api/v1/operations/${opeEdit.id}`,
-        data: { operation: { name: newName } },
-        success() {
-          $(`a[id=${opeEdit.id}]`).text(newName);
-          opeEdit.invoker.data('ope-name', newName);
-          $modal.modal('hide');
-        },
-        error(xhr) {
-          console.log(xhr.responseJSON.message);
-          $('#errorPlaceHolder').html(
-            `<div class="alert bg-warning" role="alert"><a href="#" data-dismiss="alert" class="close">×</a>${
-              xhr.responseJSON.message
-            }</div>`
-          );
-          $modal.modal('hide');
-        },
-      });
+    document.querySelector('button[data-save="true"]').addEventListener('click', async () => {
+      const newName = input.value;
+      const { opeId, apiKey } = invoker.dataset;
+      try {
+        await patchJson(`${relRoot}/api/v1/operations/${opeId}`, apiKey, {
+          operation: { name: newName },
+        });
+        document.querySelectorAll(`a[id="${opeId}"]`).forEach((link) => {
+          // eslint-disable-next-line no-param-reassign
+          link.textContent = newName;
+        });
+        invoker.dataset.opeName = newName;
+      } catch (error) {
+        console.error(error.message);
+        showError(error.message);
+      }
+      Modal.getOrCreateInstance(modalElt).hide();
     });
   }
 }

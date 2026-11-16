@@ -82,9 +82,6 @@ gem "tzinfo-data"  # , platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # required in dev but seems to be required also in production
 gem "highline"
 
-# Use jquery as the JavaScript library
-gem "jquery-rails"
-
 # Authentication/Authorization
 gem "devise", ">=4.7.1"
 gem "devise_ldap_authenticatable"

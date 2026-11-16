@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import SwaggerApiDoc from 'api_doc_viewer';
 import WhatsOptApi from '../utils/WhatsOptApi';
+import { readData } from '../utils/dom';
 
 document.addEventListener('DOMContentLoaded', () => {
   const csrfToken = document.getElementsByName('csrf-token')[0].getAttribute('content');
@@ -10,13 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     .getElementsByName('relative-url-root')[0]
     .getAttribute('content');
 
-  // eslint-disable-next-line no-undef
-  const runnerElt = $('#apidoc');
-  const apiKey = runnerElt.data('api-key');
-  // const wsServer = runnerElt.data('ws-server');
+  const runnerElt = document.getElementById('apidoc');
+  const apiKey = readData(runnerElt, 'apiKey');
+  // const wsServer = readData(runnerElt, 'wsServer');
 
   const api = new WhatsOptApi(csrfToken, apiKey, relativeUrlRoot);
 
-  const root = createRoot(runnerElt[0]);
+  const root = createRoot(runnerElt);
   root.render(<SwaggerApiDoc api={api} />);
 });
