@@ -1,5 +1,19 @@
 <h1>CHANGELOG</h1>
 
+<h3>2.1.2 (16/11/2026)</h3>
+<ul>
+  <li>Fix analyses list refresh (All/Mine, Oldest/Newest, project scope) and API key reset with jQuery 4</li>
+  <li>Disable plotly "Upload to Cloud" button enabled by default since plotly.js 4</li>
+  <li>[Tech] Node 24 is now required (Babel 8)</li>
+  <li>[Tech] Update dependencies backend and frontend (Babel 8, jQuery 4, plotly.js 4, react-table 9, react-plotly.js 4, webpack-dev-server 6, ...)</li>
+  <li>[Tech] Load swagger-ui CSS via webpack instead of Sprockets</li>
+</ul>
+
+<h3>2.1.1 (21/08/2026)</h3>
+<ul>
+  <li>[Tech] Update dependencies backend and frontend (xdsmjs 2.1, ...)</li>
+</ul>
+
 <h3>2.1.0 (06/07/2026)</h3>
 <ul>
   <li>Plain mode now splits base files and impl files in two directory.
