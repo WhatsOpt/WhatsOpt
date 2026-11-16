@@ -130,7 +130,7 @@ class DistributionModal extends React.Component {
     // Vector variable: list of distributions, one per component
     listModal.addEventListener('show.bs.modal', () => {
       this.visible = true;
-      this.setState(this._freshState());
+      this.setState(this.#freshState());
     });
     listModal.addEventListener('hidden.bs.modal', () => {
       this.visible = false;
@@ -143,12 +143,12 @@ class DistributionModal extends React.Component {
       } = this.props;
       if (uq.length === 1) {
         this.visible = true;
-        this.setState({ ...this._freshState(), selected: 0 });
+        this.setState({ ...this.#freshState(), selected: 0 });
       }
     });
     // Discard unsaved changes
     modal.addEventListener('hidden.bs.modal', () => {
-      this.setState(this._freshState(), () => {
+      this.setState(this.#freshState(), () => {
         this.visible = false;
       });
     });
@@ -160,7 +160,7 @@ class DistributionModal extends React.Component {
     return this.visible || nextState !== this.state;
   }
 
-  _freshState() {
+  #freshState() {
     const {
       conn: { uq },
     } = this.props;
@@ -169,9 +169,9 @@ class DistributionModal extends React.Component {
 
   // Edit distribution of the i-th component of a vector variable:
   // render the selected component first, then switch modals.
-  editDistribution(i) {
+  #editDistribution(i) {
     this.visible = true;
-    this.setState({ ...this._freshState(), selected: i }, () => {
+    this.setState({ ...this.#freshState(), selected: i }, () => {
       Modal.getOrCreateInstance(this.listModalRef.current).hide();
       Modal.getOrCreateInstance(this.modalRef.current).show();
     });
@@ -281,7 +281,7 @@ class DistributionModal extends React.Component {
             type="button"
             id={`${name}-${i}`}
             className="btn btn-sm"
-            onClick={() => this.editDistribution(i)}
+            onClick={() => this.#editDistribution(i)}
           >
             <i className="fas fa-edit" />
           </button>
